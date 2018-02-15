@@ -4,7 +4,7 @@
 
 ## Installation
 
-- All the `yarn (or npm) install` required to get started
+- `yarn (or npm) install`
 
 ## Running
 
