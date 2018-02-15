@@ -1,0 +1,48 @@
+@import 'reset.css';
+@import '~antd/dist/antd.css';
+
+/* ================================= */
+/* ================================= */
+
+$backgroundColor: white;
+$listItemColor: #edf3f5;
+
+html, body {
+    background: $backgroundColor;
+    font-size: 15px;
+    line-height: 1.4em;
+    color: #333;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-weight: 700;
+    color: #444;
+}
+h1 { font-size: 2.5em; margin-top: .8em; }
+h2 { font-size: 1.8em; margin-top: .8em; font-weight: 400; }
+
+.mt10 { margin-top: 10px; }
+.mt20 { margin-top: 20px; }
+
+.main-wrapper {
+    padding: 20px;
+    width: 500px;
+    margin: 0 auto;
+    text-align: center;
+}
+.todo-list {
+    margin-top: 15px;
+    margin-bottom: 0px;
+}
+.todo-list-item {
+    text-align: left;
+    padding: 20px;
+    background: $listItemColor;
+    margin-top: 1px;
+    display: flex;
+    justify-content: space-between;
+}
+.completed > .ant-checkbox-wrapper > span{
+    text-decoration: line-through;
+}
