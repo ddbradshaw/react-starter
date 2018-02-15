@@ -1,11 +1,5 @@
-import { types, getParent, destroy, flow, getSnapshot, onSnapshot, onPatch, applyPatch } from "mobx-state-tree"
-
-//TODO: Implement more modularized solution
-// Patch based time travelling
-// This is experimental
-const patches:any[] = [];
-const redoPatches:any[] = [];
-let isTimeTravel:boolean = false
+import { types, getParent, destroy, flow, getSnapshot, onSnapshot, onPatch, applyPatch, IJsonPatch } from "mobx-state-tree"
+import { History } from './History'
 
 export const TodoItem = types
   .model("Todo", {
@@ -45,7 +39,10 @@ export const TodoItem = types
     return ax;
   })
 
-export const TodoStore = types
+
+// This model is composed of the typical stuff (models, actions, views)
+// But also a generic history class that allows undo and redo actions
+export const TodoStore = types.compose(types
   .model("TodoStore", {
     todos: types.optional(types.array(TodoItem), []),
     loading: types.optional(types.boolean, false)
@@ -56,22 +53,6 @@ export const TodoStore = types
     },
     remove(todo: ITodoItem) {
       destroy(todo);
-    },
-    undo() {
-      if(patches.length == 0 ) return;
-      isTimeTravel = true;
-      const p = patches[patches.length - 1]; // Get the last patch in the heap
-      redoPatches.push(p); // Save the patch to the redo heap
-      applyPatch(self, p.inversePatch); // Apply the patch inverse
-      patches.splice(patches.length - 2, 2); // Remove the reversed actions from heap
-    },
-    redo() {
-      if(redoPatches.length == 0 ) return;
-      isTimeTravel = true;
-      const p = redoPatches[redoPatches.length - 1]; // Get the last patch in the heap
-      applyPatch(self, p.patch); // Apply the patch inverse
-      redoPatches.splice(redoPatches.length - 1, 1); // Remove the reversed actions from heap
-
     },
     getSuggestions: flow(function* getSuggestions(count: number) {
       self.loading = true;
@@ -88,15 +69,7 @@ export const TodoStore = types
         console.error(ex);
         self.loading = false;
       }
-    }),
-    // Listen for patches to the model.  Save the patches to the heap for undo/redo
-    afterCreate() {
-      onPatch(self, (patch, inversePatch) => {
-        patches.push({patch, inversePatch});
-        if(!isTimeTravel) redoPatches.splice(0, redoPatches.length);
-        isTimeTravel = false;
-      })
-    }
+    })
   }))
   // view functions are extracted into functions so that 
   // we can use view functions within other view functions
@@ -114,7 +87,9 @@ export const TodoStore = types
       }
     }
     return vx;
-  })
+  }),
+  History
+)
 
 export type ITodoItem = typeof TodoItem.Type;
 export type ITodoStore = typeof TodoStore.Type;

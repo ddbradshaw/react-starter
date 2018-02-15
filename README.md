@@ -16,7 +16,7 @@
 
 ## Testing
 
-- `yarn run jest`
+- `yarn run test`
 
 
 
