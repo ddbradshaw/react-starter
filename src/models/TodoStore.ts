@@ -11,41 +11,36 @@ export const TodoItem = types
     title: types.string,
     completed: types.optional(types.boolean, false)
   })
-  .actions(self => {
-    const ax = {
-      // Change title given a new title
-      changeLabel(newLabel: string) {
-        self.title = newLabel;
-      },
-      // Change the completed value given a new completed value
-      changeComplete(newValue: boolean) {
-        self.completed = newValue;
-      },
-      // Navigate up dependence tree two levels and remove self from tree
-      remove() {
-        getParent(self, 2).remove(self);
-      },
-      // Use mobx generator function to create synchronous async action
-      // Similiar to async / await
-      save: flow(function* save() {
-        try {
-          yield window.fetch(`https://jsonplaceholder.typicode.com/todos/1`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(getSnapshot(self))
-          })
-        } catch (ex) {
-          console.warn("Unable to save todo", ex)
-        }
-      }),
-      // Using state lifecyle hooks to listen to snapshot changes on todo and auto-save to server
-      // This is a contrived example.
-      afterCreate() {
-        onSnapshot(self, ax.save)
+  .actions(self => ({
+    // Change title given a new title
+    changeLabel(newLabel: string) {
+      self.title = newLabel;
+    },
+    // Change the completed value given a new completed value
+    changeComplete(newValue: boolean) {
+      self.completed = newValue;
+    },
+    // Navigate up dependence tree two levels and remove self from tree
+    remove() {
+      // Level 1 = array of todos
+      // Level 2 = todo store
+      getParent(self, 2).remove(self);
+    },
+    // Use mobx generator function to create synchronous async action
+    // Similiar to async / await
+    // This method mocked for reference only - never used in the app
+    save: flow(function* save() {
+      try {
+        yield window.fetch(`https://jsonplaceholder.typicode.com/todos/1`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(getSnapshot(self))
+        })
+      } catch (ex) {
+        console.warn("Unable to save todo", ex)
       }
-    }
-    return ax;
-  })
+    })
+  }))
 
 
 // This model is composed of the typical stuff (models, actions, views)
@@ -78,7 +73,7 @@ export const TodoStore = types.compose(types
         self.todos.push(...slice);
         self.loading = false;
       } catch (ex) {
-        console.error(ex);
+        console.error("Error while loading suggestions:", ex);
         self.loading = false;
       }
     })
@@ -87,6 +82,7 @@ export const TodoStore = types.compose(types
     // View functions wrapped in literal to allow referencing 
     // internal properties from within other functions
     // Only works if accessed property is a getter using 'get'
+    // Other options found here: https://github.com/mobxjs/mobx-state-tree#lifecycle-hooks-for-typesmodel
     const vx = {
       get todoCount() {
         return self.todos.length;
