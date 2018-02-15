@@ -1,6 +1,9 @@
 import { types, getParent, destroy, flow, getSnapshot, onSnapshot, onPatch, applyPatch, IJsonPatch } from "mobx-state-tree"
 import { createHistory } from './History'
 
+export type ITodoItem = typeof TodoItem.Type;
+export type ITodoStore = typeof TodoStore.Type;
+
 export const TodoItem = types
   .model("Todo", {
     userId: types.optional(types.number, 1),
@@ -100,6 +103,3 @@ export const TodoStore = types.compose(types
   }),
   createHistory(["/loading"])
 )
-
-export type ITodoItem = typeof TodoItem.Type;
-export type ITodoStore = typeof TodoStore.Type;

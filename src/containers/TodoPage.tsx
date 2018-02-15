@@ -14,39 +14,29 @@ interface ITodoPageProps {
   todoStore: ITodoStore
 }
 
-interface ITodoPageState {
-  todoValue: string,
-  suggestionCount: number
-}
-
 @inject("todoStore")
 @observer
-export default class TodoPage extends React.Component<ITodoPageProps, ITodoPageState>{
-  constructor(props: ITodoPageProps) {
-    super(props);
-    this.state = {
-      todoValue: "",
-      suggestionCount: 5
-    };
-  }
+export default class TodoPage extends React.Component<ITodoPageProps, undefined>{
+  @observable todoValue:string = "";
+  @observable suggestionCount:number = 5
 
   onAddItem = (value: any) => {
     if (value == "") { message.info("Yo! Todos must have a title"); return; }
     const id = Math.floor(Math.random() * 100000);
     this.props.todoStore.add(TodoItem.create({ id: id, title: value }))
-    this.setState({ todoValue: "" });
+    this.todoValue = "";
   }
 
   onTitleChange = (e: any) => {
-    this.setState({ todoValue: e.target.value });
+    this.todoValue = e. target.value;
   }
 
   onCountChange = (value: number) => {
-    this.setState({ suggestionCount: value });
+    this.suggestionCount = value;
   }
 
   getSuggestions = (e: any) => {
-    this.props.todoStore.getSuggestions(this.state.suggestionCount);
+    this.props.todoStore.getSuggestions(this.suggestionCount);
   }
 
   render() {
@@ -59,13 +49,13 @@ export default class TodoPage extends React.Component<ITodoPageProps, ITodoPageS
           placeholder="create new todo"
           enterButton="Add Todo"
           onSearch={this.onAddItem}
-          value={this.state.todoValue}
+          value={this.todoValue}
           onChange={this.onTitleChange}
           size="large" />
         <TodoList></TodoList>
         <div className="mt20">
           <Button onClick={this.getSuggestions} loading={todoStore.loading}>Suggest Todos</Button>
-          <InputNumber min={1} max={10} defaultValue={this.state.suggestionCount} onChange={this.onCountChange} style={{ marginLeft: '5px' }} />
+          <InputNumber min={1} max={10} defaultValue={this.suggestionCount} onChange={this.onCountChange} style={{ marginLeft: '5px' }} />
         </div>
         <ButtonGroup className="mt20">
           <Button onClick={todoStore.undo}>
