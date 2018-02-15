@@ -6,14 +6,15 @@ Array [
     "op": "add",
     "path": "/todos/0",
     "value": Object {
-      "complete": false,
+      "completed": false,
       "id": 1,
-      "label": "Test Todo",
+      "title": "Test Todo",
+      "userId": 1,
     },
   },
   Object {
     "op": "replace",
-    "path": "/todos/0/label",
+    "path": "/todos/0/title",
     "value": "New Label",
   },
 ]
@@ -21,11 +22,13 @@ Array [
 
 exports[`can add new todos - track snapshots 1`] = `
 Object {
+  "loading": false,
   "todos": Array [
     Object {
-      "complete": false,
+      "completed": false,
       "id": 1,
-      "label": "Test Todo",
+      "title": "Test Todo",
+      "userId": 1,
     },
   ],
 }
@@ -34,11 +37,13 @@ Object {
 exports[`can add new todos - track snapshots 2`] = `
 Array [
   Object {
+    "loading": false,
     "todos": Array [
       Object {
-        "complete": false,
+        "completed": false,
         "id": 1,
-        "label": "Test Todo",
+        "title": "Test Todo",
+        "userId": 1,
       },
     ],
   },

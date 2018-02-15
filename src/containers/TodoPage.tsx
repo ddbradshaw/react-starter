@@ -35,7 +35,7 @@ export default class TodoPage extends React.Component<ITodoPageProps, undefined>
     this.suggestionCount = value;
   }
 
-  getSuggestions = (e: any) => {
+  onGetSuggestions = (e: any) => {
     this.props.todoStore.getSuggestions(this.suggestionCount);
   }
 
@@ -54,7 +54,7 @@ export default class TodoPage extends React.Component<ITodoPageProps, undefined>
           size="large" />
         <TodoList></TodoList>
         <div className="mt20">
-          <Button onClick={this.getSuggestions} loading={todoStore.loading}>Suggest Todos</Button>
+          <Button onClick={this.onGetSuggestions} loading={todoStore.loading}>Suggest Todos</Button>
           <InputNumber min={1} max={10} defaultValue={this.suggestionCount} onChange={this.onCountChange} style={{ marginLeft: '5px' }} />
         </div>
         <ButtonGroup className="mt20">
